@@ -9,16 +9,26 @@ StickyBombs.Combo:Boolean("W", "Use W", false)
 StickyBombs.Combo:Boolean("E", "Use E", true)
 StickyBombs.Combo:Boolean("R", "Use R", true)
 
+StickyBombs:SubMenu("Jungleclear", "Jungleclear")
+StickyBombs.Jungleclear:Boolean("useQ", "Use Q", true)
+StickyBombs.Jungleclear:Boolean("useE", "Use E", true)
+StickyBombs.Jungleclear:Key("JungleQE", "Jungle Clear Key", string.byte("V"))
+
 StickyBombs:SubMenu("Misc", "Misc")
 StickyBombs.Misc:Boolean("KS", "Killsteal", true)
+StickyBombs.Misc:Boolean("Autolvl", "Auto level", true) 
+StickyBombs.Misc:DropDown("Autolvltable", "Priority", 1, {"Q-E-W", "Q-W-E"})
 
 OnTick(function(myHero)
 	if not IsDead(myHero) then
 		local unit = GetCurrentTarget()
 		KS()
 		Combo(unit)
+		JungleClear()
 	end
 end)
+
+local lastlevel = GetLevel(myHero)-1
 
 function Combo(unit)
 	if IOW:Mode() == "Combo" then
@@ -72,4 +82,31 @@ function KS()
 	end
 end	
 
-print("Welcome To |ELO|Hell| Credits to Logge <3 for his time")
+function JungleClear()
+if StickyBombs.Jungleclear.JungleQE:Value() then
+	for i,minion in pairs(minionManager.objects) do
+		if MINION_JUNGLE == GetTeam(minion) then
+			if ValidTarget(minion, 1150) then
+				if StickyBombs.Jungleclear.useQ:Value() and CanUseSpell(myHero,_Q) == READY and ValidTarget(minion, 1150) then
+					CastSkillShot(_Q,GetOrigin(minion))
+				end
+				if StickyBombs.Jungleclear.useE:Value() and CanUseSpell(myHero,_E) == READY and ValidTarget(minion, 900) then
+					CastSkillShot(_E,GetOrigin(minion))
+				end				
+			end
+		end
+	end
+end
+end
+
+if StickyBombs.Misc.Autolvl:Value() then  
+	if GetLevel(myHero) > lastlevel then
+    if StickyBombs.Misc.Autolvltable:Value() == 1 then leveltable = {_Q, _E, _W, _Q, _Q, _R, _Q, _Q, _E , _E, _R, _E, _E, _W, _W, _R, _W, _W}
+    elseif StickyBombs.Misc.Autolvltable:Value() == 2 then leveltable = {_Q, _W, _E, _Q, _Q, _R, _Q, _Q, _W, _W, _R, _W, _W, _E, _E, _R, _E, _E}
+    end
+    DelayAction(function() LevelSpell(leveltable[GetLevel(myHero)]) end, math.random(1000,3000))
+    lastlevel = GetLevel(myHero)
+	end
+end
+	
+print("Welcome To |ELO|Hell| Credits to Logge,Deftsu and Noddy for their time and codes<3")

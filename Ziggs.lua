@@ -1,6 +1,6 @@
 if GetObjectName(GetMyHero()) ~= "Ziggs" then return end
 
-require("Inspired")
+
 
 StickyBombs = Menu("Ziggs", "Ziggs")
 StickyBombs:SubMenu("Combo", "Combo")

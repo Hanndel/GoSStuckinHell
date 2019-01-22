@@ -1,3 +1,5 @@
+--add me on discord plox Hanndel#0002
+
 if GetObjectName(GetMyHero()) ~= "Khazix" then return end
 
 require('Inspired')
